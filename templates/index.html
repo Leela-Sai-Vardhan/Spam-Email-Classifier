@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SpamShield - Email & SMS Classifier</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="particles" id="particles"></div>
+
+    <header>
+        <div class="logo">
+            <span class="shield">🛡️</span>
+            <h1>Spam<span class="highlight">Shield</span></h1>
+        </div>
+        <p class="tagline">AI-Powered Email & SMS Spam Detector</p>
+    </header>
+
+    <main>
+        <div class="container">
+            <div class="input-section">
+                <div class="card">
+                    <h2>📝 Analyze Your Message</h2>
+                    <textarea id="messageInput" placeholder="Paste your email or SMS message here..." rows="5"></textarea>
+                    <div class="button-group">
+                        <button id="classifyBtn" onclick="classifyMessage()">
+                            <span class="btn-icon">🔍</span> Analyze Message
+                        </button>
+                        <button id="clearBtn" onclick="clearAll()" class="secondary">
+                            <span class="btn-icon">🗑️</span> Clear
+                        </button>
+                    </div>
+
+                    <div class="examples-section">
+                        <h3>Quick Test Examples</h3>
+                        <div class="example-tags" id="exampleTags"></div>
+                    </div>
+                </div>
+
+                <div class="card result-card" id="resultCard" style="display:none;">
+                    <h2>Result</h2>
+                    <div class="result-content">
+                        <div class="verdict" id="verdict"></div>
+                        <div class="confidence-container">
+                            <label>Confidence Score</label>
+                            <div class="confidence-bar">
+                                <div class="confidence-fill" id="confidenceFill"></div>
+                            </div>
+                            <span class="confidence-value" id="confidenceValue">0%</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="side-panels">
+                <div class="card">
+                    <h2>📊 Model Comparison</h2>
+                    <div id="modelComparison" class="comparison-grid"></div>
+                </div>
+
+                <div class="card">
+                    <h2>🔤 Top Spam Indicators</h2>
+                    <div id="spamFeatures" class="feature-list"></div>
+                </div>
+
+                <div class="card">
+                    <h2>✅ Top Ham Indicators</h2>
+                    <div id="hamFeatures" class="feature-list"></div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <p>Built with Flask, Scikit-learn, NLTK & TF-IDF | SpamShield v1.0</p>
+    </footer>
+
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>
