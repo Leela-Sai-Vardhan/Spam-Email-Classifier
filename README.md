@@ -1,14 +1,14 @@
 # SpamShield - Email & SMS Spam Classifier
 
-An AI-powered web application that classifies email and SMS messages as **Spam** or **Ham** (not spam) using multiple machine learning algorithms with real-time confidence scoring.
+Classifies email and SMS messages as **Spam** or **Ham** (not spam) using multiple ML models with confidence scores.
 
 ## Features
 
-- **Multi-Model Comparison** - Compares Naive Bayes, SVM, and Logistic Regression side-by-side
-- **Real-time Classification** - Instant spam detection with confidence scores
+- **Multi-Model Comparison** - Compares Naive Bayes, SVM, and Logistic Regression
+- **Spam Detection** - Classifies messages with a confidence score
 - **Top Indicator Words** - Shows which words contribute most to spam/ham classification
-- **Quick Test Examples** - One-click example messages for instant testing
-- **Dark-Themed UI** - Modern, responsive interface with animated particles
+- **Test Examples** - Sample messages to try the classifier
+- **Dark UI** - Clean interface with animated particles
 
 ## Tech Stack
 
@@ -19,10 +19,10 @@ An AI-powered web application that classifies email and SMS messages as **Spam**
 
 ## How It Works
 
-1. **Preprocessing:** Text is lowercased, special characters removed, stemmed, and stopwords filtered
+1. **Preprocessing:** Lowercase, remove special characters, stem, filter stopwords
 2. **Vectorization:** TF-IDF with unigrams and bigrams (max 5000 features)
-3. **Training:** Three models are trained and compared; the best one is selected
-4. **Prediction:** New messages are classified with a confidence score
+3. **Training:** Train three models and pick the best one
+4. **Prediction:** Classify new messages with a confidence score
 
 ## Run Locally
 
@@ -37,7 +37,7 @@ Open http://localhost:5000 in your browser.
 
 ## Dataset
 
-Uses a built-in sample dataset of 50 messages (25 spam, 25 ham). You can replace `data/spam.csv` with the [UCI SMS Spam Dataset](https://archive.ics.uci.edu/ml/datasets/sms+spam+collection) for production use.
+Uses a built-in sample dataset of 50 messages (25 spam, 25 ham). You can replace `data/spam.csv` with the [UCI SMS Spam Dataset](https://archive.ics.uci.edu/ml/datasets/sms+spam+collection) for a larger dataset.
 
 ## Model Accuracy
 

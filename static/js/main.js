@@ -77,7 +77,7 @@ function useExample(text) {
 async function classifyMessage() {
     const input = document.getElementById('messageInput').value.trim();
     if (!input) {
-        alert('Please enter a message to classify.');
+        alert('Enter a message first.');
         return;
     }
 
@@ -100,7 +100,7 @@ async function classifyMessage() {
 
         showResult(data);
     } catch (err) {
-        alert('Error connecting to server. Make sure the Flask app is running.');
+        alert("Can't reach the server. Is Flask running?");
     } finally {
         btn.innerHTML = '<span class="btn-icon">🔍</span> Analyze Message';
         btn.disabled = false;

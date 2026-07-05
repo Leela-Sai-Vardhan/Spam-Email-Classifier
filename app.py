@@ -29,11 +29,11 @@ def index():
 def classify():
     data = request.get_json()
     if not data or 'message' not in data:
-        return jsonify({'error': 'No message provided'}), 400
+        return jsonify({'error': 'Please provide a message.'}), 400
 
     message = data['message'].strip()
     if not message:
-        return jsonify({'error': 'Empty message'}), 400
+        return jsonify({'error': 'Message is empty.'}), 400
 
     result = predict(message)
     return jsonify(result)
