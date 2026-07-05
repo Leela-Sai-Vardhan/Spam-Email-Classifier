@@ -4,6 +4,9 @@ import json
 import joblib
 import numpy as np
 import pandas as pd
+import nltk
+from nltk.corpus import stopwords
+from nltk.stem import PorterStemmer
 from sklearn.model_selection import train_test_split
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.naive_bayes import MultinomialNB
@@ -11,43 +14,12 @@ from sklearn.svm import LinearSVC
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import accuracy_score, classification_report
 
+nltk.download('stopwords', quiet=True)
+nltk.download('punkt', quiet=True)
+nltk.download('punkt_tab', quiet=True)
+
 MODELS_DIR = os.path.join(os.path.dirname(__file__), 'models')
 DATA_DIR = os.path.join(os.path.dirname(__file__), 'data')
-
-STOP_WORDS = frozenset([
-    'i', 'me', 'my', 'myself', 'we', 'our', 'ours', 'ourselves', 'you', "you're",
-    "you've", "you'll", "you'd", 'your', 'yours', 'yourself', 'yourselves', 'he',
-    'him', 'his', 'himself', 'she', "she's", 'her', 'hers', 'herself', 'it', "it's",
-    'its', 'itself', 'they', 'them', 'their', 'theirs', 'themselves', 'what', 'which',
-    'who', 'whom', 'this', 'that', "that'll", 'these', 'those', 'am', 'is', 'are',
-    'was', 'were', 'be', 'been', 'being', 'have', 'has', 'had', 'having', 'do',
-    'does', 'did', 'doing', 'a', 'an', 'the', 'and', 'but', 'if', 'or', 'because',
-    'as', 'until', 'while', 'of', 'at', 'by', 'for', 'with', 'about', 'against',
-    'between', 'through', 'during', 'before', 'after', 'above', 'below', 'to',
-    'from', 'up', 'down', 'in', 'out', 'on', 'off', 'over', 'under', 'again',
-    'further', 'then', 'once', 'here', 'there', 'when', 'where', 'why', 'how',
-    'all', 'both', 'each', 'few', 'more', 'most', 'other', 'some', 'such', 'no',
-    'nor', 'not', 'only', 'own', 'same', 'so', 'than', 'too', 'very', 's', 't',
-    'can', 'will', 'just', 'don', "don't", 'should', "should've", 'now', 'd', 'll',
-    'm', 'o', 're', 've', 'y', 'ain', 'aren', "aren't", 'couldn', "couldn't",
-    'didn', "didn't", 'doesn', "doesn't", 'hadn', "hadn't", 'hasn', "hasn't",
-    'haven', "haven't", 'isn', "isn't", 'ma', 'mightn', "mightn't", 'mustn',
-    "mustn't", 'needn', "needn't", 'shan', "shan't", 'shouldn', "shouldn't",
-    'wasn', "wasn't", 'weren', "weren't", 'won', "won't", 'wouldn', "wouldn't",
-    'also', 'get', 'got', 'go', 'going', 'would', 'could', 'like', 'much',
-    'one', 'even', 'well', 'back', 'still', 'way', 'take', 'come', 'make',
-])
-
-
-def simple_stem(word):
-    suffixes = ['ing', 'tion', 'ness', 'ment', 'able', 'ible', 'ful', 'less',
-                'ous', 'ive', 'al', 'ly', 'er', 'est', 'ize', 'ise', 'ity',
-                'ent', 'ant', 'ence', 'ance', 'ies', 'ied', 'es', 'ed', 'er',
-                'est', 's']
-    for suffix in suffixes:
-        if word.endswith(suffix) and len(word) - len(suffix) >= 3:
-            return word[:-len(suffix)]
-    return word
 
 
 def preprocess_text(text):
@@ -55,7 +27,9 @@ def preprocess_text(text):
     text = re.sub(r'[^a-zA-Z\s]', '', text)
     text = re.sub(r'\s+', ' ', text).strip()
     tokens = text.split()
-    tokens = [simple_stem(t) for t in tokens if t not in STOP_WORDS and len(t) > 2]
+    stemmer = PorterStemmer()
+    stop_words = set(stopwords.words('english'))
+    tokens = [stemmer.stem(t) for t in tokens if t not in stop_words and len(t) > 2]
     return ' '.join(tokens)
 
 
@@ -73,7 +47,7 @@ def generate_sample_data():
         "WINNER! You've been selected for a special prize. Call NOW!",
         "Free trial! No credit card required. Cancel anytime!",
         "Discount pharmacy online! Best prices on all medications!",
-        "Double your income! Secret method revealed. Order now!",
+        "Double your income! Secret method revealed! Order now!",
         "You are a WINNER! Claim your prize at www.freecash.com",
         "Act NOW! Limited supply! 90% off designer watches!",
         "Hello Dear, I am a prince and I need your help to transfer $15 million.",
@@ -86,11 +60,6 @@ def generate_sample_data():
         "URGENT: Your package delivery failed. Reschedule at pkg-delivery.com",
         "Get 1000 Instagram followers FREE! No survey needed!",
         "Your PayPal account is limited. Login immediately to restore access.",
-        "Buy cheap medications online! Best pharmacy deals!",
-        "You've been selected for a cash prize! Call now to claim!",
-        "Make $5000 daily with this simple trick! Guaranteed results!",
-        "FREE iPhone giveaway! Click here to enter now!",
-        "Urgent: Your bank account needs verification. Act now!",
     ]
     ham_messages = [
         "Hey, are we still meeting for lunch tomorrow?",
@@ -118,11 +87,6 @@ def generate_sample_data():
         "The concert tickets go on sale Friday at noon.",
         "Your package has been delivered to your doorstep.",
         "Reminder: Team outing this Friday at 5 PM.",
-        "Hey, just wanted to check in and see how you're doing.",
-        "The quarterly report is due next Tuesday. Please prepare accordingly.",
-        "Can we schedule a call to discuss the project timeline?",
-        "I've updated the spreadsheet with the latest numbers.",
-        "Thanks for the feedback on my proposal. Very helpful.",
     ]
 
     data = []
@@ -132,7 +96,6 @@ def generate_sample_data():
         data.append({'label': 'ham', 'message': msg})
 
     df = pd.DataFrame(data)
-    os.makedirs(DATA_DIR, exist_ok=True)
     df.to_csv(os.path.join(DATA_DIR, 'spam.csv'), index=False)
     return df
 
